@@ -2,7 +2,7 @@
   "name": "kinodno-express-bot",
   "version": "1.0.0",
   "description": "KINODNO chatbot",
-  "main": "index.js",
+  "main": "server.js",
   "author": "Slawek B",
   "scripts": {
     "dev": "nodemon ./src/server.ts -mode=development",
