@@ -1,10 +1,6 @@
-// import express from 'express';
 import express = require('express');
-
 require('dotenv').config();
-// import configJson from "../tsconfig.json";
 import winston = require('winston');
-// import Telegraf, { ContextMessageUpdate, Extra, Markup } from 'telegraf';
 const Telegraf = require('telegraf');
 // import * as bodyParser from 'body-parser';
 // const router = express.Router();
@@ -28,8 +24,6 @@ const logger = winston.createLogger({
 const app = express();
 
 // const apiRouter = require('./routes/api');
-// app.use('/custom-sub-path/static', express.static('dist/static'));
-
 
 app.get('/', (request, response) => {
     response.send('Hi this is api bot!');
