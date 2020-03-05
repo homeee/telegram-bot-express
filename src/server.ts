@@ -1,9 +1,10 @@
 import express = require('express');
 require('dotenv').config();
 import winston = require('winston');
-const Telegraf = require('telegraf');
-// import * as bodyParser from 'body-parser';
-// const router = express.Router();
+import Stage = require('telegraf/stage');
+import startScene from './controllers/start';
+import Telegraf, { ContextMessageUpdate, Markup } from 'telegraf';
+
 
 const port = parseInt(process.env.PORT, 10) || 5000;
 
@@ -34,8 +35,12 @@ app.get('/', (request, response) => {
 // app.use(process.env.PATH_TO_PROJECT, router);
 
 const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
+const stage = new Stage([
+    startScene,
+]);
 
-bot.start((ctx) => ctx.reply('Welcome'));
+// bot.start((ctx) => ctx.reply('Welcome'));
+// bot.start(async (ctx: ContextMessageUpdate) => ctx.scene.enter('start'));
 bot.help((ctx) => ctx.reply('Send me a sticker'));
 bot.on('sticker', (ctx) => ctx.reply('👍'));
 
