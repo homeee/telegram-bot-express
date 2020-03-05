@@ -1,7 +1,7 @@
 module.exports = {
   apps : [{
     name: 'API-KINODNO',
-    script: 'dist/server.js',
+    script: './dist/server.js',
 
     // Options reference: https://pm2.keymetrics.io/docs/usage/application-declaration/
     args: 'one two',

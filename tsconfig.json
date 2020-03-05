@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
     "sourceMap": true,
     "target": "es2017",
     "outDir": "./dist",
-    "baseUrl": "/test",
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true
+    "baseUrl": "./src",
+    "allowSyntheticDefaultImports": true
   },
   "include": [
     "src/**/*.ts"
