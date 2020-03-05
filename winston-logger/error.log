@@ -1,0 +1,6 @@
+{"service":"user-service","level":"error"}
+{"service":"user-service","level":"error"}
+{"service":"user-service","level":"error"}
+{"message":"test logger","level":"error","service":"user-service"}
+{"message":"test logger","level":"error","service":"user-service"}
+{"message":"test logger","level":"error","service":"user-service"}

@@ -7,3 +7,6 @@ Available at http://t.me/konodno_bot
 # deployment on production
 `npm run build`
 - make sure pm2 installed, see `ecosystem.config.js` file
+
+# to see all messages in real time
+Log into ssh, get to project folder and perform `tail -f winston-logger/messages.log`

@@ -6,7 +6,6 @@
   "author": "Slawek B",
   "scripts": {
     "dev": "nodemon ./src/server.ts -mode=development",
-    "dev-node": "node ./src/server.ts",
     "dev-ts": "ts-node ./src/server.ts",
     "build": "tsc -b",
     "watch": "tsc -w",

@@ -16,8 +16,9 @@ const logger = winston.createLogger({
         // - Write all logs with level `error` and below to `error.log`
         // - Write all logs with level `info` and below to `combined.log`
         //
-        new winston.transports.File({filename: 'error.log', level: 'error'}),
-        new winston.transports.File({filename: 'combined.log'})
+        new winston.transports.File({filename: 'winston-logger/error.log', level: 'error'}),
+        new winston.transports.File({filename: 'winston-logger/combined.log'}),
+        new winston.transports.File({filename: 'winston-logger/messages.log', level:'info'}),
     ]
 });
 
@@ -37,10 +38,26 @@ const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
 bot.start((ctx) => ctx.reply('Welcome'));
 bot.help((ctx) => ctx.reply('Send me a sticker'));
 bot.on('sticker', (ctx) => ctx.reply('👍'));
+
 bot.hears('hi', (ctx) => {
     ctx.reply('Hey there');
-    logger.info(ctx, 'User uses /saveme command');
+    logger.info(ctx.update.message.text);
 });
+
+bot.hears('pidor', (ctx) => {
+    ctx.reply('Sam pidor!');
+    logger.info(ctx.update.message.text);
+});
+
+//just log all incoming messages
+bot.on('message', (ctx) => {
+    logger.info(ctx.update.message.text);
+});
+
+bot.catch((error: any) => {
+    logger.error(undefined, 'Global error has happened, %O', error);
+});
+
 bot.launch();
 
 // app.use('/api', apiRouter);
