@@ -5,8 +5,9 @@
   "main": "server.js",
   "author": "Slawek B",
   "scripts": {
-    "dev": "nodemon ./src/server.ts -mode=development",
-    "dev-ts": "ts-node ./src/server.ts",
+    "start": "tsc && node dist/server.js",
+    "serve": "nodemon ./src/server.ts",
+    "serve:ts": "ts-node ./src/server.ts",
     "build": "tsc -b",
     "watch": "tsc -w",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,7 +19,9 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "nodemon": "^2.0.2",
+    "path": "^0.12.7",
     "telegraf": "^3.36.0",
+    "telegraf-i18n": "^6.6.0",
     "ts-node": "^8.6.2",
     "typescript": "^3.8.2",
     "winston": "^3.2.1"

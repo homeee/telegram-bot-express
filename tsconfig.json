@@ -8,12 +8,8 @@
     "outDir": "./dist",
     "baseUrl": "./src",
     "allowSyntheticDefaultImports": true,
-    "lib": ["es2017"]
   },
   "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
+    "src/**/*"
   ]
 }
