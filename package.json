@@ -5,9 +5,8 @@
   "main": "server.js",
   "author": "Slawek B",
   "scripts": {
-    "start": "tsc && node dist/server.js",
+    "start": "node dist/server.js",
     "serve": "nodemon ./src/server.ts",
-    "serve:ts": "ts-node ./src/server.ts",
     "build": "tsc -b",
     "watch": "tsc -w",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -22,6 +21,7 @@
     "path": "^0.12.7",
     "telegraf": "^3.36.0",
     "telegraf-i18n": "^6.6.0",
+    "telegram-typings": "^4.0.0-beta",
     "ts-node": "^8.6.2",
     "typescript": "^3.8.2",
     "winston": "^3.2.1"

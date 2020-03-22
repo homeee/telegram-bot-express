@@ -1,14 +1,15 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
     "esModuleInterop": true,
+    "target": "es6",
+//    "noImplicitAny": true,
+    "moduleResolution": "node",
     "sourceMap": true,
-    "target": "es2017",
-    "outDir": "./dist",
-    "baseUrl": "./src",
-    "allowSyntheticDefaultImports": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "resolveJsonModule": true,
+    "lib": ["es2017"],
   },
   "include": [
     "src/**/*"

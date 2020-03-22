@@ -1,27 +1,33 @@
 import express = require('express');
-const Telegraf = require('telegraf');
-const Markup = Telegraf.Markup;
-const Extra = Telegraf.Extra;
 require('dotenv').config();
+import path from 'path';
+import Telegraf from 'telegraf';
+import TelegrafI18n from 'telegraf-i18n';
 import winston = require('winston');
 const Stage = require('telegraf/stage');
 const { leave } = Stage;
 import startScene  from './controllers/start';
-import path from 'path';
-// import { ContextMessageUpdate } from 'telegraf';
 import Scene = require('telegraf/scenes/base');
-import TelegrafI18n from 'telegraf-i18n';
-import  match  from 'telegraf-i18n';
+
+const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
+const stage = new Stage([
+    startScene,
+]);
 
 
 const i18n = new TelegrafI18n({
     defaultLanguage: 'ru',
+    allowMissing: false, // Default true
     directory: path.resolve(__dirname, 'locales'),
-    allowMissing: false,
+    useSession: true,
 });
 
 
+bot.use(stage.middleware());
+bot.use(i18n.middleware());
+// bot.use(Telegraf.memorySession());
 
+// i18n.loadLocale('ru', {greeting: 'Hello4!'});
 
 const port = parseInt(process.env.PORT, 10) || 5000;
 
@@ -50,28 +56,9 @@ app.get('/', (request, response) => {
 });
 
 
-// Greeter scene
-const greeter = new Scene('greeter');
-greeter.enter((ctx) => ctx.reply('Hi-greeter'));
-greeter.leave((ctx) => ctx.reply('Bye-greeter'));
-greeter.hears(/hi/gi, leave());
-greeter.hears('test', (ctx) => ctx.reply('test-greeter'));
-greeter.on('message', (ctx) => ctx.reply('Send `hi`'));
 
-const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
-const stage = new Stage([
-    startScene,
-    greeter
-]);
-stage.command('cancel', leave());
-
-
-// Scene registration
-stage.register(greeter);
-bot.use(stage.middleware());
 
 bot.start((ctx) => ctx.reply('Привет, добро пожаловать в KINODNO-BOT, тут ты можешь быстро найти фильмы из разных источников'));
-// bot.command('greeter', (ctx) => ctx.scene.enter('greeter'));
 
 // bot.command('search', (ctx) =>
 //     ctx.scene.enter('greeter')
@@ -81,27 +68,30 @@ bot.start((ctx) => ctx.reply('Привет, добро пожаловать в K
 //     ctx.scene.enter('start')
 // // ctx.reply('test', '/search')
 // );
-bot.hears(/(.*?)/, (ctx) => {
-    logger.debug(ctx, 'Default handler has fired');
-    // Нажми на иконку в правом нижнем углу чтобы открыть Telegram-клавиатуру и выбери раздел, в который ты хочешь попасть
-    // {"reply_markup":{"keyboard":[["👀 Поиск","🎥 Моя коллекция"],["⚙️ Настройки","❓ Обо мне"],["💰 Поддержать","✍️ Обратная связь"]],"resize_keyboard":true}}
+
+bot.command('ru', (i18n) => {
+    // i18n.locale('ru');
+    // return replyWithHTML(i18n.t('greeting'))
+});
 
 
-    var mainKeyboard  = {"reply_markup":{
-        keyboard:[["👀 Поиск","🎥 Моя коллекция"],["⚙️ Настройки","❓ Обо мне"],["💰 Поддержать","✍️ Обратная связь"]]},
-        "resize_keyboard":true
-    };
-console.log(mainKeyboard);
-// 🚧 Нажми на иконку в правом нижнем углу чтобы открыть Telegram-клавиатуру и выбери раздел, в который ты хочешь попасть {
-//         reply_markup: { keyboard: [ [Array], [Array], [Array] ], resize_keyboard: true }
-//     }
-
-    ctx.reply('Нажми на иконку в правом нижнем углу', mainKeyboard);
-
+bot.hears(/(.*?)/, (ctx:any) => {
+   let mainKeyboard = {
+       'reply_markup': {
+           'keyboard':[
+               [ctx.i18n.t('keyboards.main_keyboard.search')],
+               [ctx.i18n.t('keyboards.main_keyboard.movies')],
+               [ctx.i18n.t('keyboards.main_keyboard.settings')],
+               [ctx.i18n.t('keyboards.main_keyboard.about')],
+           ],
+           "resize_keyboard":true,
+       }
+   };
+    ctx.reply('Выбери чем я могу тебе помочь', mainKeyboard);
 });
 // bot.startPolling();
 
-bot.hears('search', ((ctx) => ctx.scene.enter('greeter')));
+// bot.hears('search', ((ctx) => ctx.scene.enter('greeter')));
 // bot.command('search', (ctx) => ctx.reply('Hi search'));
 // bot.command('start', (ctx) => ctx.scene.enter('greeter'));
 // bot.help((ctx) => ctx.reply('Send me a sticker'));
