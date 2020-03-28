@@ -2,7 +2,7 @@ import express = require('express');
 require('dotenv').config();
 import path from 'path';
 import session from 'telegraf/session';
-import Telegraf, {ContextMessageUpdate} from 'telegraf';
+import Telegraf, { ContextMessageUpdate, Extra, Markup } from 'telegraf';
 import TelegrafI18n from 'telegraf-i18n';
 const { match, reply } = require('telegraf-i18n');
 import winston = require('winston');
@@ -66,7 +66,7 @@ bot.start((ctx) => ctx.reply('Привет, добро пожаловать в K
 
 bot.hears(
     match('keyboards.main_keyboard.search'),
-    (ctx:any) =>{
+    (ctx:any ) =>{
         console.log('search entered');
         ctx.scene.enter('search');
     }
