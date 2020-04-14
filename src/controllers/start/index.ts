@@ -6,7 +6,7 @@ import Scene = require('telegraf/scenes/base');
 const { leave } = Stage;
 const start = new Scene('start');
 
-start.enter((ctx) => {
+start.enter((ctx:ContextMessageUpdate) => {
   // const uid = String(ctx.from.id);
   ctx.reply('Choose language / Выбери язык');
 });

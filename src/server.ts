@@ -1,10 +1,9 @@
-import express = require('express');
 require('dotenv').config();
+import express = require('express');
 import path from 'path';
-import session from 'telegraf/session';
+// import session from 'telegraf/session';
 import Telegraf, { ContextMessageUpdate, Extra, Markup } from 'telegraf';
-import TelegrafI18n from 'telegraf-i18n';
-const { match, reply } = require('telegraf-i18n');
+import TelegrafI18n, { match } from 'telegraf-i18n';
 import winston = require('winston');
 const Stage = require('telegraf/stage');
 const { leave } = Stage;
@@ -27,7 +26,7 @@ const i18n = new TelegrafI18n({
 });
 
 
-bot.use(session());
+// bot.use(session());
 bot.use(stage.middleware());
 bot.use(i18n.middleware());
 
@@ -62,11 +61,11 @@ bot.command('greeter', (ctx:any) =>
     ctx.scene.enter('greeter')
 );
 
-bot.start((ctx) => ctx.reply('Привет, добро пожаловать в KINODNO-BOT, тут ты можешь быстро найти фильмы из разных источников'));
+bot.start((ctx:ContextMessageUpdate) => ctx.reply('Привет, добро пожаловать в KINODNO-BOT, тут ты можешь быстро найти фильмы из разных источников'));
 
 bot.hears(
     match('keyboards.main_keyboard.search'),
-    (ctx:any ) =>{
+    (ctx:ContextMessageUpdate ) =>{
         console.log('search entered');
         ctx.scene.enter('search');
     }
@@ -74,29 +73,31 @@ bot.hears(
 
 // bot.command('greeter', (ctx) => ctx.scene.enter('greeter'));
 
-bot.hears(/(.*?)/, (ctx:any) => {
+bot.hears(/(.*?)/, (ctx:ContextMessageUpdate) => {
    let mainKeyboard = {
        'reply_markup': {
            'keyboard':[
-               [ctx.i18n.t('keyboards.main_keyboard.search')],
-               [ctx.i18n.t('keyboards.main_keyboard.movies')],
-               [ctx.i18n.t('keyboards.main_keyboard.settings')],
-               [ctx.i18n.t('keyboards.main_keyboard.about')],
+               [ctx.i18n.t('keyboards.main_keyboard.search')] as any,
+               [ctx.i18n.t('keyboards.main_keyboard.movies')] as any,
+               [ctx.i18n.t('keyboards.main_keyboard.settings')] as any,
+               [ctx.i18n.t('keyboards.main_keyboard.about')] as any,
            ],
            "resize_keyboard":true,
        }
    };
+   console.log('mainKeyboard', mainKeyboard);
+
     ctx.reply('Выбери чем я могу тебе помочь', mainKeyboard);
 });
 
-bot.hears(['hi','privet','привет', 'здравствуйте'], (ctx) => {
+bot.hears(['hi','privet','привет', 'здравствуйте'], (ctx:ContextMessageUpdate) => {
     ctx.reply('Hey there');
     logger.info(ctx.update.message.text);
 });
 
 
 //just log all incoming messages
-bot.on('message', (ctx) => {
+bot.on('message', (ctx:ContextMessageUpdate) => {
     logger.info(ctx.update.message.text);
 });
 
