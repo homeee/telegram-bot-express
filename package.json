@@ -6,16 +6,19 @@
   "author": "Slawek B",
   "scripts": {
     "start": "node-ts dist/server.js",
-    "serve": "nodemon --exec ts-node -- ./dist/server.js",
+    "serve-nodemon": "nodemon  ./dist/server.js",
     "build": "tsc -b",
-    "watch": "tsc -w",
+    "watch-ts": "tsc -w",
+    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\"  \"npm run watch-ts\" \"npm run serve-nodemon\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
+    "concurrently": "^5.2.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "imdb-api": "^4.0.3",
     "nodemon": "^2.0.2",
     "path": "^0.12.7",
     "telegraf": "^3.36.0",

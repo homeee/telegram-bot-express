@@ -1,55 +1,82 @@
-// import { Markup, Extra, ContextMessageUpdate } from 'telegraf';
+import {Markup, Extra, ContextMessageUpdate} from 'telegraf';
+import * as imdb from 'imdb-api';
 // import Movie from '../../models/Movie';
 // import User from '../../models/User';
 // import { movieSearch, ISearchResult } from '../../util/movie-search';
 // import logger from '../../util/logger';
 // import { saveToSession, deleteFromSession } from '../../util/session';
 // import { releaseChecker } from '../../util/release-checker';
-//
-// /**
-//  * Returning list of movies. Taken either from API or from the session
-//  * @param ctx - telegram context
-//  */
-// export async function getMovieList(ctx: ContextMessageUpdate): Promise<ISearchResult[]> {
-//   if (ctx.session.movies) return ctx.session.movies as ISearchResult[];
-//
-//   let movies: ISearchResult[];
-//
-//   try {
-//     logger.debug(ctx, 'Searching for movie %s', ctx.message.text);
-//     movies = await movieSearch[ctx.session.language](ctx);
-//
-//     saveToSession(ctx, 'movies', movies);
-//
-//     return movies;
-//   } catch (e) {
-//     logger.error(ctx, 'Search failed with the error: %O', e);
-//   }
-// }
-//
-// /**
-//  * Displays menu with a list of movies
-//  * @param movies - list of movies
-//  */
-// export function getMoviesMenu(movies: ISearchResult[]) {
-//   return Extra.HTML().markup((m: Markup) =>
-//     m.inlineKeyboard(
-//       movies.map(item => [
-//         m.callbackButton(
-//           `(${item.year}) ${item.title}`,
-//           JSON.stringify({ a: 'movie', p: item.id }),
-//           false
-//         )
-//       ]),
-//       {}
-//     )
-//   );
-// }
-//
-// /**
-//  * Menu to control current movie
-//  * @param ctx - telegram context
-//  */
+
+
+export interface ISearchParameters {
+    title: string;
+    // year: number;
+    // language: 'ru' | 'en';
+}
+
+interface ISearchResult {
+    id: string;
+    title: string;
+    year: number;
+    posterUrl: string;
+}
+
+const IMDB_SEARCH_PARAMS = {
+    apiKey: process.env.IMDB_API_KEY,
+    timeout: 30000
+};
+
+
+/**
+ * Returning list of movies. Taken either from API or from the session
+ * @param ctx - telegram context
+ */
+export async function getMovieList(ctx: ContextMessageUpdate): Promise<ISearchResult[]> {
+    try {
+        let movies = await imdb.search({name: ctx.message.text, year: 2019}, IMDB_SEARCH_PARAMS);
+
+        return movies.results.map(item => ({
+            id: item.imdbid,
+            title: item.title,
+            year: item.year,
+            posterUrl: item.poster
+        }));
+    } catch (e) {
+        console.log('error occured', e.message);
+        return [];
+    }
+}
+
+
+export async function searchMovie(ctx: ContextMessageUpdate) {
+    let movies = await imdb.search({name: 'lion', year: 2019}, IMDB_SEARCH_PARAMS);
+    return movies;
+}
+
+
+/**
+ * Displays menu with a list of movies
+ * @param movies - list of movies
+ */
+export function getMoviesMenu(movies: ISearchResult[]) {
+    return Extra.HTML().markup((m: Markup) =>
+        m.inlineKeyboard(
+            movies.map(item => [
+                m.callbackButton(
+                    `(${item.year}) ${item.title}`,
+                    JSON.stringify({a: 'movie', p: item.id}),
+                    false
+                )
+            ]),
+            {}
+        )
+    );
+}
+
+/**
+ * Menu to control current movie
+ * @param ctx - telegram context
+ */
 // export function getMovieControlMenu(ctx: ContextMessageUpdate) {
 //   return Extra.HTML().markup((m: Markup) =>
 //     m.inlineKeyboard(
@@ -69,11 +96,11 @@
 //     )
 //   );
 // }
-//
-// /**
-//  * Pushing id to the user's observable array and clearing movies in session
-//  * @param ctx - telegram context
-//  */
+
+/**
+ * Pushing id to the user's observable array and clearing movies in session
+ * @param ctx - telegram context
+ */
 // export async function addMovieForUser(ctx: ContextMessageUpdate) {
 //   const movie: ISearchResult = ctx.movie;
 //   const movieDoc = await Movie.findOneAndUpdate(
@@ -93,7 +120,7 @@
 //       upsert: true
 //     }
 //   );
-//
+
 //   await User.findOneAndUpdate(
 //     {
 //       _id: ctx.from.id
@@ -108,11 +135,11 @@
 //
 //   deleteFromSession(ctx, 'movies');
 // }
-//
-// /**
-//  * Perform several checks, returns either a reason why movie can't be added or true
-//  * @param ctx - telegram context
-//  */
+
+/**
+ * Perform several checks, returns either a reason why movie can't be added or true
+ * @param ctx - telegram context
+ */
 // export async function canAddMovie(ctx: ContextMessageUpdate) {
 //   logger.debug(ctx, 'Checks if can add a movie');
 //   const movieRelease = await releaseChecker[ctx.session.language]({
