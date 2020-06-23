@@ -3,6 +3,8 @@ import {match} from 'telegraf-i18n';
 import Stage from 'telegraf/stage';
 import Scene from 'telegraf/scenes/base';
 import {getMovieList, getMoviesMenu} from './helpers';
+import {exposeMovie} from './middlewares';
+import {movieAction, backAction} from './actions'
 
 // import { getLanguageKeyboard } from './helpers';
 
@@ -61,5 +63,8 @@ searcher.on('text', async (ctx: ContextMessageUpdate) => {
     }
 
 });
+
+searcher.action(/movie/, exposeMovie, movieAction);
+searcher.action(/back/, backAction);
 
 export default searcher;

@@ -32,15 +32,23 @@ const IMDB_SEARCH_PARAMS = {
  * @param ctx - telegram context
  */
 export async function getMovieList(ctx: ContextMessageUpdate): Promise<ISearchResult[]> {
+    console.log('data from session', ctx.session.movies);
+    if (ctx.session.movies) return ctx.session.movies as ISearchResult[];
+
     try {
+        // console.log(ctx);
         let movies = await imdb.search({name: ctx.message.text, year: 2019}, IMDB_SEARCH_PARAMS);
 
-        return movies.results.map(item => ({
+        let result = movies.results.map(item => ({
             id: item.imdbid,
             title: item.title,
             year: item.year,
             posterUrl: item.poster
         }));
+
+        ctx.session['movies'] = result;
+
+        return result;
     } catch (e) {
         console.log('error occured', e.message);
         return [];
@@ -59,6 +67,7 @@ export async function searchMovie(ctx: ContextMessageUpdate) {
  * @param movies - list of movies
  */
 export function getMoviesMenu(movies: ISearchResult[]) {
+    console.log('getMoviesMenu: ', movies);
     return Extra.HTML().markup((m: Markup) =>
         m.inlineKeyboard(
             movies.map(item => [
@@ -72,6 +81,30 @@ export function getMoviesMenu(movies: ISearchResult[]) {
         )
     );
 }
+/**
+ * Menu to control current movie
+ * @param ctx - telegram context
+ */
+export function getMovieControlMenu(ctx: ContextMessageUpdate) {
+    return Extra.HTML().markup((m: Markup) =>
+        m.inlineKeyboard(
+            [
+                m.callbackButton(
+                    ctx.i18n.t('scenes.search.back_button'),
+                    JSON.stringify({ a: 'back', p: undefined }),
+                    false
+                ),
+                m.callbackButton(
+                    ctx.i18n.t('scenes.search.add_button'),
+                    JSON.stringify({ a: 'add', p: ctx.movie.id }),
+                    false
+                )
+            ],
+            {}
+        )
+    );
+}
+
 
 /**
  * Menu to control current movie
